@@ -1,0 +1,9 @@
+program _semantics;
+
+var _NonSemanticVar01: int; _NonSemanticVar02: float;
+
+main {
+    _NonSemanticVar01 = ( 2 > _NonSemanticVar02 ) * 0.99 + ( _NonSemanticVar02 != 4 );
+}
+
+end

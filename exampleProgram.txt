@@ -1,0 +1,27 @@
+program ducky;
+
+var a, b, c: int;x, y, z: float;
+
+void ducky_func(n:int,m:int)[{
+	n = 5 + 5;
+	m = n * 8;
+	f = a > h;
+}];
+
+main {
+	if(b > 9){
+		x = y;
+	}else{
+		z = y;
+	};
+	while{
+		x = p;
+	} do (
+		z != p
+	);
+	duck_funk(a, a);
+	print("perro", a);
+	
+}
+
+end

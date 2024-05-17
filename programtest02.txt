@@ -1,0 +1,1 @@
+program _;var _:int; _:float;void _func01()[{}];main{}end
