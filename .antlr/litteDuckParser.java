@@ -1,7 +1,4 @@
-// Generated from c:/JavLib/LittleDuck/litteDuck.g4 by ANTLR 4.13.1
-
-    import java.util.*;
-
+// Generated from c:/JavLib/Compiler-LitteDuck/litteDuck.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -111,42 +108,6 @@ public class litteDuckParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-
-	    class Tupla {
-	        private String id;
-	        private String tipo;
-
-	        public Tupla(String id, String tipo) {
-	            this.id = id;
-	            this.tipo = tipo;
-	        }
-
-	        public void setTipo(String tipo) {
-	            this.tipo = tipo;
-	        }
-
-	        public void setId(String id) {
-	            this.id = id;
-	        }
-
-	        public String getId() {
-	            return id;
-	        }
-
-	        @Override
-	        public boolean equals(Object o) {
-	            if (this == o) return true;
-	            if (o == null || getClass() != o.getClass()) return false;
-	            Tupla tuple = (Tupla) o;
-	            return id.equals(tuple.id);
-	        }
-
-	        @Override
-	        public int hashCode() {
-	            return Objects.hash(id);
-	        }
-	    }
-
 	public litteDuckParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
@@ -154,7 +115,7 @@ public class litteDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramaContext extends ParserRuleContext {
-		public List<Tupla> globalVar = new ArrayList<Tupla>();
+		public List<TVariables> globalVar = new ArrayList<TVariables>();
 		public List<String> dirFunc = new ArrayList<String>();
 		public boolean isLocalVar = false;
 		public Token ID;
@@ -184,7 +145,15 @@ public class litteDuckParser extends Parser {
 			match(T__0);
 			setState(81);
 			((ProgramaContext)_localctx).ID = match(ID);
-			((ProgramaContext)getInvokingContext(0)).dirFunc.add((((ProgramaContext)_localctx).ID!=null?((ProgramaContext)_localctx).ID.getText():null));System.out.println("TOY VIVO JAJAJA");
+
+			        ((ProgramaContext)getInvokingContext(0)).dirFunc.add((((ProgramaContext)_localctx).ID!=null?((ProgramaContext)_localctx).ID.getText():null));
+
+			        CuboSemantico cuboSemantico = new CuboSemantico();
+
+			        System.out.println("valor para 0,0,3: "+cuboSemantico.getTipo(0,0,3));
+			        
+			        System.out.println("TOY VIVO JAJAJA");
+			        
 			setState(83);
 			match(T__1);
 			setState(84);
@@ -328,22 +297,22 @@ public class litteDuckParser extends Parser {
 			((Def_varsContext)_localctx).type = type();
 
 			        for(int i = 0; i < ((Def_varsContext)getInvokingContext(3)).pendigIds.size(); i++){
-			            Tupla _tupla = new Tupla(((Def_varsContext)getInvokingContext(3)).pendigIds.get(i), (((Def_varsContext)_localctx).type!=null?_input.getText(((Def_varsContext)_localctx).type.start,((Def_varsContext)_localctx).type.stop):null));
+			            TVariables _variable = new TVariables(((Def_varsContext)getInvokingContext(3)).pendigIds.get(i), (((Def_varsContext)_localctx).type!=null?_input.getText(((Def_varsContext)_localctx).type.start,((Def_varsContext)_localctx).type.stop):null), null);
 			            if(((ProgramaContext)getInvokingContext(0)).isLocalVar) {
 
-			                if ( ((FuncsContext)getInvokingContext(8)).localVar.contains(_tupla) || ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) ) {
+			                if ( ((FuncsContext)getInvokingContext(8)).localVar.contains(_variable) || ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) ) {
 			                    System.err.println("ERROR: Double definition for local variable: "+((Def_varsContext)getInvokingContext(3)).pendigIds.get(i) );
 			                }
 
-			                ((FuncsContext)getInvokingContext(8)).localVar.add(_tupla);
+			                ((FuncsContext)getInvokingContext(8)).localVar.add(_variable);
 			                System.out.println("Variable funcion: "+((Def_varsContext)getInvokingContext(3)).pendigIds.get(i)+" Tipo: "+(((Def_varsContext)_localctx).type!=null?_input.getText(((Def_varsContext)_localctx).type.start,((Def_varsContext)_localctx).type.stop):null)+"\n");
 			            } else {
 
-			                if ( ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) ) {
+			                if ( ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) ) {
 			                    System.err.println("ERROR: Double definition for global variable: "+((Def_varsContext)getInvokingContext(3)).pendigIds.get(i) );
 			                }
 
-			                ((ProgramaContext)getInvokingContext(0)).globalVar.add(_tupla);
+			                ((ProgramaContext)getInvokingContext(0)).globalVar.add(_variable);
 			                System.out.println("Variable global: "+((Def_varsContext)getInvokingContext(3)).pendigIds.get(i)+" Tipo: "+(((Def_varsContext)_localctx).type!=null?_input.getText(((Def_varsContext)_localctx).type.start,((Def_varsContext)_localctx).type.stop):null)+"\n");
 			            }
 			        }
@@ -536,7 +505,7 @@ public class litteDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncsContext extends ParserRuleContext {
-		public ArrayList<Tupla> localVar = new ArrayList<Tupla>();
+		public ArrayList<TVariables> localVar = new ArrayList<TVariables>();
 		public Md_funcsContext md_funcs() {
 			return getRuleContext(Md_funcsContext.class,0);
 		}
@@ -731,13 +700,13 @@ public class litteDuckParser extends Parser {
 				setState(146);
 				((Ids_funcsContext)_localctx).type = type();
 
-				        Tupla _tupla = new Tupla((((Ids_funcsContext)_localctx).ID!=null?((Ids_funcsContext)_localctx).ID.getText():null), (((Ids_funcsContext)_localctx).type!=null?_input.getText(((Ids_funcsContext)_localctx).type.start,((Ids_funcsContext)_localctx).type.stop):null));
+				        TVariables _variable = new TVariables((((Ids_funcsContext)_localctx).ID!=null?((Ids_funcsContext)_localctx).ID.getText():null), (((Ids_funcsContext)_localctx).type!=null?_input.getText(((Ids_funcsContext)_localctx).type.start,((Ids_funcsContext)_localctx).type.stop):null), null);
 
-				        if ( ((FuncsContext)getInvokingContext(8)).localVar.contains(_tupla) || ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) ) {
+				        if ( ((FuncsContext)getInvokingContext(8)).localVar.contains(_variable) || ((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) ) {
 				            System.err.println("ERROR: Double definition for local variable parameter: "+(((Ids_funcsContext)_localctx).ID!=null?((Ids_funcsContext)_localctx).ID.getText():null) );
 				        }
 
-				        ((FuncsContext)getInvokingContext(8)).localVar.add(_tupla);
+				        ((FuncsContext)getInvokingContext(8)).localVar.add(_variable);
 				        System.out.println("Parametro funcion: "+(((Ids_funcsContext)_localctx).ID!=null?((Ids_funcsContext)_localctx).ID.getText():null)+" Tipo: "+(((Ids_funcsContext)_localctx).type!=null?_input.getText(((Ids_funcsContext)_localctx).type.start,((Ids_funcsContext)_localctx).type.stop):null)+"\n");
 				        
 				setState(148);
@@ -1044,14 +1013,14 @@ public class litteDuckParser extends Parser {
 			((AssignContext)_localctx).ID = match(ID);
 
 
-			        Tupla _tupla = new Tupla((((AssignContext)_localctx).ID!=null?((AssignContext)_localctx).ID.getText():null), null);
+			        TVariables _variable = new TVariables((((AssignContext)_localctx).ID!=null?((AssignContext)_localctx).ID.getText():null), null, null);
 			        if(((ProgramaContext)getInvokingContext(0)).isLocalVar) {
-			            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) && !((FuncsContext)getInvokingContext(8)).localVar.contains(_tupla) ) {
+			            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) && !((FuncsContext)getInvokingContext(8)).localVar.contains(_variable) ) {
 			                System.err.println("ERROR: Local Variable "+(((AssignContext)_localctx).ID!=null?((AssignContext)_localctx).ID.getText():null)+" not exist" );
 			            }
 			            
 			        } else {
-			            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) ) {
+			            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) ) {
 			                System.err.println("ERROR: Global variable "+(((AssignContext)_localctx).ID!=null?((AssignContext)_localctx).ID.getText():null)+" not exist" );
 			            }
 			        }
@@ -1607,13 +1576,13 @@ public class litteDuckParser extends Parser {
 				setState(231);
 				((Factor_cteContext)_localctx).ID = match(ID);
 
-				        Tupla _tupla = new Tupla((((Factor_cteContext)_localctx).ID!=null?((Factor_cteContext)_localctx).ID.getText():null), null);
+				        TVariables _variable = new TVariables((((Factor_cteContext)_localctx).ID!=null?((Factor_cteContext)_localctx).ID.getText():null), null, null);
 				        if(((ProgramaContext)getInvokingContext(0)).isLocalVar) {
-				            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) && !((FuncsContext)getInvokingContext(8)).localVar.contains(_tupla) ) {
+				            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) && !((FuncsContext)getInvokingContext(8)).localVar.contains(_variable) ) {
 				                System.err.println("ERROR: Local Variable "+(((Factor_cteContext)_localctx).ID!=null?((Factor_cteContext)_localctx).ID.getText():null)+" not exist" );
 				            }
 				        } else {
-				            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_tupla) ) {
+				            if ( !((ProgramaContext)getInvokingContext(0)).globalVar.contains(_variable) ) {
 				                System.err.println("ERROR: Global variable "+(((Factor_cteContext)_localctx).ID!=null?((Factor_cteContext)_localctx).ID.getText():null)+" not exist" );
 				            }
 				        }

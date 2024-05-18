@@ -1,53 +1,19 @@
 grammar litteDuck;
 
-@parser::header {
-    import java.util.*;
-}
-
-@parser::members
-{
-    class Tupla {
-        private String id;
-        private String tipo;
-
-        public Tupla(String id, String tipo) {
-            this.id = id;
-            this.tipo = tipo;
-        }
-
-        public void setTipo(String tipo) {
-            this.tipo = tipo;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Tupla tuple = (Tupla) o;
-            return id.equals(tuple.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id);
-        }
-    }
-}
-
 programa locals [
-    List<Tupla> globalVar = new ArrayList<Tupla>(),
+    List<TVariables> globalVar = new ArrayList<TVariables>(),
     List<String> dirFunc = new ArrayList<String>(),
     boolean isLocalVar = false
     ]
-    :   'program' ID {$programa::dirFunc.add($ID.text);System.out.println("TOY VIVO JAJAJA");} ';' vars funcs 'main' body 'end' 
+    :   'program' ID {
+        $programa::dirFunc.add($ID.text);
+
+        CuboSemantico cuboSemantico = new CuboSemantico();
+
+        System.out.println("valor para 0,0,3: "+cuboSemantico.getTipo(0,0,3));
+        
+        System.out.println("TOY VIVO JAJAJA");
+        } ';' vars funcs 'main' body 'end' 
         {
             System.out.println("\n\nVARIABLES GLOBALES"+$programa::globalVar+"\n\n");
             System.out.println("\n\nVARIABLES DIR_FUNCIONES"+$programa::dirFunc+"\n\n");
@@ -60,22 +26,22 @@ md_vars
 def_vars locals [ArrayList<String> pendigIds = new ArrayList<String>()]
     :   list_ids ':' type {
         for(int i = 0; i < $def_vars::pendigIds.size(); i++){
-            Tupla _tupla = new Tupla($def_vars::pendigIds.get(i), $type.text);
+            TVariables _variable = new TVariables($def_vars::pendigIds.get(i), $type.text, null);
             if($programa::isLocalVar) {
 
-                if ( $funcs::localVar.contains(_tupla) || $programa::globalVar.contains(_tupla) ) {
+                if ( $funcs::localVar.contains(_variable) || $programa::globalVar.contains(_variable) ) {
                     System.err.println("ERROR: Double definition for local variable: "+$def_vars::pendigIds.get(i) );
                 }
 
-                $funcs::localVar.add(_tupla);
+                $funcs::localVar.add(_variable);
                 System.out.println("Variable funcion: "+$def_vars::pendigIds.get(i)+" Tipo: "+$type.text+"\n");
             } else {
 
-                if ( $programa::globalVar.contains(_tupla) ) {
+                if ( $programa::globalVar.contains(_variable) ) {
                     System.err.println("ERROR: Double definition for global variable: "+$def_vars::pendigIds.get(i) );
                 }
 
-                $programa::globalVar.add(_tupla);
+                $programa::globalVar.add(_variable);
                 System.out.println("Variable global: "+$def_vars::pendigIds.get(i)+" Tipo: "+$type.text+"\n");
             }
         }
@@ -93,7 +59,7 @@ list_ids_
 type:   'int'
     |   'float'
     ;
-funcs locals [ArrayList<Tupla> localVar = new ArrayList<Tupla>()]
+funcs locals [ArrayList<TVariables> localVar = new ArrayList<TVariables>()]
     :   {$programa::isLocalVar = true;} md_funcs md_funcs_ {$programa::isLocalVar = false;}
     |   
     ;
@@ -113,13 +79,13 @@ md_funcs
         } '(' ids_funcs ')' '[' vars body ']' ';';
 ids_funcs
     :   ID ':' type {
-        Tupla _tupla = new Tupla($ID.text, $type.text);
+        TVariables _variable = new TVariables($ID.text, $type.text, null);
 
-        if ( $funcs::localVar.contains(_tupla) || $programa::globalVar.contains(_tupla) ) {
+        if ( $funcs::localVar.contains(_variable) || $programa::globalVar.contains(_variable) ) {
             System.err.println("ERROR: Double definition for local variable parameter: "+$ID.text );
         }
 
-        $funcs::localVar.add(_tupla);
+        $funcs::localVar.add(_variable);
         System.out.println("Parametro funcion: "+$ID.text+" Tipo: "+$type.text+"\n");
         }ids_funcs_
     |   
@@ -147,14 +113,14 @@ statement
 assign
     :   ID {
 
-        Tupla _tupla = new Tupla($ID.text, null);
+        TVariables _variable = new TVariables($ID.text, null, null);
         if($programa::isLocalVar) {
-            if ( !$programa::globalVar.contains(_tupla) && !$funcs::localVar.contains(_tupla) ) {
+            if ( !$programa::globalVar.contains(_variable) && !$funcs::localVar.contains(_variable) ) {
                 System.err.println("ERROR: Local Variable "+$ID.text+" not exist" );
             }
             
         } else {
-            if ( !$programa::globalVar.contains(_tupla) ) {
+            if ( !$programa::globalVar.contains(_variable) ) {
                 System.err.println("ERROR: Global variable "+$ID.text+" not exist" );
             }
         }
@@ -202,13 +168,13 @@ factor_op_
     ;
 factor_cte
     :   ID {
-        Tupla _tupla = new Tupla($ID.text, null);
+        TVariables _variable = new TVariables($ID.text, null, null);
         if($programa::isLocalVar) {
-            if ( !$programa::globalVar.contains(_tupla) && !$funcs::localVar.contains(_tupla) ) {
+            if ( !$programa::globalVar.contains(_variable) && !$funcs::localVar.contains(_variable) ) {
                 System.err.println("ERROR: Local Variable "+$ID.text+" not exist" );
             }
         } else {
-            if ( !$programa::globalVar.contains(_tupla) ) {
+            if ( !$programa::globalVar.contains(_variable) ) {
                 System.err.println("ERROR: Global variable "+$ID.text+" not exist" );
             }
         }
