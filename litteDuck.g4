@@ -301,10 +301,28 @@ factor_op
     ;
 factor
     :   '(' { $programa::POper.push("#"); } expresion ')' { $programa::POper.pop(); }
-    |   factor_op_ factor_cte 
+    |   factor_op_ factor_cte {
+        if ("-".equals($factor_op_.text)) {
+            String s_L_O = $programa::PilaO.pop();
+            String s_L_O_T = $programa::PilaT.pop();
+
+            
+            String _tvar_id = "t" + $programa::avail;
+            $programa::avail++;
+            TVariables _tvar = new TVariables(_tvar_id, s_L_O_T, null);
+            $programa::globalVar.add(_tvar);
+            $programa::PilaO.push(_tvar_id);
+            $programa::PilaT.push(s_L_O_T);
+            Quad _quad = new Quad("*", s_L_O, "-1", _tvar_id);
+            $programa::quads.add(_quad);
+            $programa::quad_cont++;
+            System.out.println(_quad);
+
+        }
+    }
     ;
 factor_op_
-    :   termino_op
+    :   termino_op 
     |
     ;
 factor_cte

@@ -1,9 +1,7 @@
 program Quads;
-var A, B, C, D :int; E, F, G :float;
+var A, B, C, D, E, F, G,H,I,J :int;
 
 main{
-    do {
-        A = B + C;
-    } while (E>F) ;
+    A = B * -C;
 }
 end
