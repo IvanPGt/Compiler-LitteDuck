@@ -2,6 +2,11 @@ program Quads;
 var A, B, C, D :int; E, F, G :float;
 
 main{
-    A =  A / B < D + C;
+    if (A>B) {
+        C = D * B;
+    } else {
+        E = F / G;
+    };
+    D = A + B;
 }
 end

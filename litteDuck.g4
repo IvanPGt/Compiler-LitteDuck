@@ -15,7 +15,11 @@ programa locals [
     Stack<String> PilaO = new Stack<>(),
     Stack<String> PilaT = new Stack<>(),
     Stack<String> POper = new Stack<>(),
+    Stack<Integer> PJumps = new Stack<>(),
+
+
     int avail = 0,
+    int quad_cont = 0,
 
     boolean isLocalVar = false
     ]
@@ -34,6 +38,7 @@ programa locals [
         System.out.println("------debug-------");
     
     } ';' vars funcs 'main' body 'end' {
+        System.out.println("quad_cont: "+$programa::quad_cont);
         System.out.println("-------CUADRUPOS-------");
         System.out.println($programa::quads);
         System.out.println("-------CUADRUPOS_FIN-------");
@@ -114,7 +119,7 @@ ids_funcs_
     :   ',' ids_funcs
     |
     ;
-body:   '{'{System.out.println("llegue main");} md_body {System.out.println("no mori main");} '}' ;
+body:   '{' md_body '}' ;
 md_body
     :   statement md_body_
     |
@@ -145,23 +150,16 @@ assign locals [String tipo_id]
             } else { $assign::tipo_id = $programa::f.findTipoById($programa::globalVar, $ID.text); }
         }
 
-        System.out.println("no error asignacion id");
-        
-
         } '=' expresion ';' {
-            System.out.println("ASIGNACION");
-            System.out.println($ID.text+ "=" +$programa::PilaO.peek());
 
-            //falta validacion de si se puede asignar los tipos, si no ERROR
             if( $programa::cuboSemantico.checkError(7, $programa::cuboSemantico.getTipoId($assign::tipo_id), $programa::cuboSemantico.getTipoId($programa::PilaT.peek())) != 4 ) {
                 Quad _quad = new Quad("=", $programa::PilaO.pop(), null, $ID.text);
                 $programa::quads.add(_quad);
+                $programa::quad_cont++;
+                System.out.println(_quad);
             } else {
                 System.err.println("ERROR: Assign Type mismatch: " + $ID.text + ":" + $assign::tipo_id + " & " + $programa::PilaO.peek() + ":" + $programa::PilaT.peek());
-            }
-
-
-            System.out.println("ASIGNACION_end");
+            } 
         };
 expresion
     :   exp md_exp ;
@@ -193,8 +191,8 @@ md_exp
                     $programa::PilaT.push(res_type);
                     Quad _quad = new Quad(s_oper, s_L_O, s_R_O, _tvar_id);
                     $programa::quads.add(_quad);
+                    $programa::quad_cont++;
                     System.out.println(_quad);
-                    System.out.println(_tvar_id+":"+res_type);
 
                 } else {
                     System.err.println("ERROR: Type mismatch: " + s_L_O + ":" + s_L_O_T + " & " + s_R_O + ":" + s_R_O_T);
@@ -213,7 +211,6 @@ exp
     :   termino { 
         if(!$programa::POper.empty()){
             if("+".equals($programa::POper.peek()) || "-".equals($programa::POper.peek()) ) {
-                System.out.println("LLEGUE A: "+$programa::POper.peek());
                 String s_L_O = $programa::PilaO.pop();
                 String s_L_O_T = $programa::PilaT.pop();
 
@@ -225,9 +222,6 @@ exp
                 int oper = $programa::cuboSemantico.getOperId(s_oper);
                 int L_O_T = $programa::cuboSemantico.getTipoId(s_L_O_T);
                 int R_O_T = $programa::cuboSemantico.getTipoId(s_R_O_T);
-
-                System.out.println("oper:"+s_oper+" LoperT:"+s_L_O_T+" RoperT:"+s_R_O_T);
-                System.out.println("oper:"+oper+" LoperT:"+L_O_T+" RoperT:"+R_O_T);
             
 
                 String res_type = $programa::cuboSemantico.getTipo(oper, L_O_T, R_O_T);
@@ -241,8 +235,8 @@ exp
                     $programa::PilaT.push(res_type);
                     Quad _quad = new Quad(s_oper, s_L_O, s_R_O, _tvar_id);
                     $programa::quads.add(_quad);
+                    $programa::quad_cont++;
                     System.out.println(_quad);
-                    System.out.println(_tvar_id+":"+res_type);
 
                 } else {
                     System.err.println("ERROR: Type mismatch: " + s_L_O + ":" + s_L_O_T + " & " + s_R_O + ":" + s_R_O_T);
@@ -286,8 +280,9 @@ termino
                     $programa::PilaT.push(res_type);
                     Quad _quad = new Quad(s_oper, s_L_O, s_R_O, _tvar_id);
                     $programa::quads.add(_quad);
+                    $programa::quad_cont++;
                     System.out.println(_quad);
-                    System.out.println(_tvar_id+":"+res_type);
+ 
 
                 } else {
                     System.err.println("ERROR: Type mismatch: " + s_L_O + ":" + s_L_O_T + " & " + s_R_O + ":" + s_R_O_T);
@@ -314,27 +309,27 @@ factor_op_
     ;
 factor_cte
     :   ID {
-        System.out.println("llegue factor_cte: "+$ID.text);
+  
         TVariables _variable = new TVariables($ID.text, null, null);
         if($programa::isLocalVar) {
             if ( !$programa::globalVar.contains(_variable) && !$funcs::localVar.contains(_variable) ) {
+
                 System.err.println("ERROR: Local Variable "+$ID.text+" not exist" );
             } else { 
-                System.out.println("por hacer push id de: "+$ID.text); 
+    
                 $programa::PilaO.push($ID.text); 
-                System.out.println("por hacer push type de: "+$ID.text); 
                 $programa::PilaT.push($programa::f.findTipoById($funcs::localVar, $ID.text)); 
-                System.out.println("se hizo push de: "+$ID.text); 
+      
             }
         } else {
             if ( !$programa::globalVar.contains(_variable) ) {
+
                 System.err.println("ERROR: Global variable "+$ID.text+" not exist" );
             } else { 
-                System.out.println("por hacer push id de: "+$ID.text);
+          
                 $programa::PilaO.push($ID.text); 
-                System.out.println("por hacer push type de: "+$ID.text); 
                 $programa::PilaT.push($programa::f.findTipoById($programa::globalVar, $ID.text)); 
-                System.out.println("se hizo push de: "+$ID.text);
+
             }
         }
     }
@@ -344,10 +339,37 @@ cte
     :   CTE_INT { $programa::PilaO.push($CTE_INT.text); $programa::PilaT.push("int"); }
     |   CTE_FLOAT { $programa::PilaO.push($CTE_FLOAT.text); $programa::PilaT.push("float"); }
     ;
-condition
-    :   'if' '(' expresion ')' body condition_else ';' ;
+condition locals [ String exp_type ]
+    :   'if' '(' expresion ')' { 
+        $condition::exp_type = $programa::PilaT.pop();
+        if ( !"bool".equals($condition::exp_type) ) {
+            System.err.println("ERROR: Type mismatch: if exprestion is not type bool: type: "+$condition::exp_type);
+        } else {
+            Quad _quad = new Quad("GotoF", $programa::PilaO.pop(), null, null);
+            $programa::quads.add(_quad);
+            $programa::quad_cont++;
+            System.out.println(_quad);
+            $programa::PJumps.push($programa::quad_cont-1);
+        }
+    } body condition_else ';' {
+        if ( "bool".equals($condition::exp_type) ) {
+            System.out.println("ENTRE FINAL");
+            $programa::quads.get($programa::PJumps.pop()).setRes($programa::quad_cont);
+        }
+    };
 condition_else
-    :   'else' body
+    :   'else' {
+        if ( "bool".equals($condition::exp_type) ) {
+
+            System.out.println("ENTRE ELSE");
+            Quad _quad = new Quad("Goto", null, null, null);
+            $programa::quads.add(_quad);
+            $programa::quad_cont++;
+            System.out.println(_quad);
+            $programa::quads.get($programa::PJumps.pop()).setRes($programa::quad_cont);
+            $programa::PJumps.push($programa::quad_cont-1);
+        }
+    } body
     |
     ;
 cicle
