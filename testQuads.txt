@@ -1,0 +1,7 @@
+program Quads;
+var A, B, C, D :int; E, F, G :float;
+
+main{
+    A =  A / B < D + C;
+}
+end
