@@ -372,8 +372,20 @@ condition_else
     } body
     |
     ;
-cicle
-    :   'do' body 'while' '(' expresion ')' ';' ;
+cicle 
+    :   'do' { 
+        $programa::PJumps.push($programa::quad_cont);
+        }body 'while' '(' expresion ')' {
+            String exp_type = $programa::PilaT.pop();
+            if ( !"bool".equals(exp_type) ) {
+                System.err.println("ERROR: Type mismatch: while exprestion is not type bool: type: "+exp_type);
+            } else {
+                Quad _quad = new Quad("GotoV", $programa::PilaO.pop(), null, $programa::PJumps.pop());
+                $programa::quads.add(_quad);
+                $programa::quad_cont++;
+                System.out.println(_quad);
+            }
+        }';' ;
 f_call
     :   ID {
         if ( !$programa::dirFunc.contains($ID.text) ) {

@@ -2,11 +2,8 @@ program Quads;
 var A, B, C, D :int; E, F, G :float;
 
 main{
-    if (A>B) {
-        C = D * B;
-    } else {
-        E = F / G;
-    };
-    D = A + B;
+    do {
+        A = B + C;
+    } while (E>F) ;
 }
 end

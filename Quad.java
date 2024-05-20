@@ -17,7 +17,7 @@ class Quad<T> {
 
     @Override
     public String toString() {
-        return  "( "+ oper + ", " + opdo1 + ", " + opdo2 + ", " + res + ")";
+        return  "("+ oper + ", " + opdo1 + ", " + opdo2 + ", " + res + ")";
     }
 
 }
